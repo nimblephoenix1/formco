@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formco | Concrete Foundations, Footings and Retaining Walls | Salem, Utah</title>
+<meta name="description" content="Formco forms and pours concrete foundations, footings, and retaining walls. Based in Salem, serving Utah. Call 801-381-7089.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@800&display=swap" rel="stylesheet">
+<style>
+:root{--slab:#d8d7d2;--ink:#232527;--rust:#b4501f;--paper:#f6f5f2;--ply:#c8a770}
+*{box-sizing:border-box}
+body{margin:0;font:18px/1.55 Barlow,system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif;font-weight:800;line-height:1;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--rust);outline-offset:3px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+.top{background:var(--ink);color:var(--paper)}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;padding-top:14px;padding-bottom:14px}
+.logo{font:800 30px "Barlow Condensed",sans-serif;letter-spacing:.03em;text-decoration:none}
+.tel{font-weight:600;text-decoration:none}
+.hero{background:var(--slab) repeating-linear-gradient(90deg,transparent 0 119px,rgba(35,37,39,.16) 119px 121px);border-bottom:10px solid var(--ply);padding:72px 0 64px}
+.hero h1{font-size:clamp(46px,10vw,96px);max-width:11ch}
+.hero p{max-width:34ch;margin:20px 0 28px;font-size:20px}
+.btn{display:inline-block;background:var(--rust);color:#fff;font:600 18px Barlow,sans-serif;padding:14px 24px;border:0;text-decoration:none;cursor:pointer}
+.btn:hover{background:#963f15}
+.link{margin-left:18px;font-weight:600}
+section{padding:56px 0}
+h2{font-size:clamp(34px,6vw,48px);margin-bottom:24px}
+.svc{border-top:3px solid var(--ink);padding:18px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:8px 24px}
+.svc:last-child{border-bottom:3px solid var(--ink)}
+h3{font-size:30px}
+.svc p{margin:0}
+form{display:grid;gap:14px;max-width:560px}
+label{font-weight:600;display:grid;gap:4px}
+input,select,textarea{font:inherit;padding:11px;border:2px solid var(--ink);background:#fff;border-radius:0;width:100%}
+textarea{min-height:110px}
+.hp{position:absolute;left:-9999px}
+footer{background:var(--ink);color:var(--paper);padding:28px 0}
+@media(max-width:640px){.svc{grid-template-columns:1fr}.link{display:block;margin:16px 0 0}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#">FORMCO</a>
+  <a class="tel" href="tel:+18013817089">801-381-7089</a>
+</div></header>
+
+<main>
+<div class="hero"><div class="wrap">
+  <h1>Foundations, footings, and retaining walls.</h1>
+  <p>Formed and poured by Formco in Salem, Utah. Serving communities across Utah.</p>
+  <a class="btn" href="tel:+18013817089">Call 801-381-7089</a>
+  <a class="link" href="#quote">Request a quote online</a>
+</div></div>
+
+<section><div class="wrap">
+  <h2>What we pour</h2>
+  <div class="svc"><h3>Foundations</h3><p>Forms built and concrete poured for new foundations.</p></div>
+  <div class="svc"><h3>Footings</h3><p>Footings formed and poured to your plans.</p></div>
+  <div class="svc"><h3>Retaining walls</h3><p>Concrete retaining walls, formed and poured on site.</p></div>
+  <div class="svc"><h3>Other concrete work</h3><p>Have something else in mind? Call, or send the details below.</p></div>
+</div></section>
+
+<section id="quote" style="background:var(--slab)"><div class="wrap">
+  <h2>Request a quote</h2>
+  <form action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+    <input type="hidden" name="subject" value="New quote request from the Formco website">
+    <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off">
+    <label>Your name <input name="name" required autocomplete="name"></label>
+    <label>Phone <input name="phone" type="tel" required autocomplete="tel"></label>
+    <label>Email (optional) <input name="email" type="email" autocomplete="email"></label>
+    <label>Type of project
+      <select name="project"><option>Foundation</option><option>Footings</option><option>Retaining wall</option><option>Other</option></select>
+    </label>
+    <label>Job location and details <textarea name="details" required></textarea></label>
+    <button class="btn" type="submit">Send request</button>
+  </form>
+</div></section>
+</main>
+
+<footer><div class="wrap">Formco, Salem, Utah. Call <a href="tel:+18013817089">801-381-7089</a>.</div></footer>
+
+<script src="/widget.js"
+  data-password="CHANGE_ME"
+  data-title="Formco Assistant"
+  data-color="#b4501f"
+  data-greeting="Hi, I'm Formco's virtual assistant. Ask about foundations, footings, or retaining walls, or tell me about your project."></script>
+</body>
+</html>
