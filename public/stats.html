@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Chatbot usage</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@800&display=swap" rel="stylesheet">
+<style>
+:root{--slab:#d8d7d2;--ink:#232527;--rust:#b4501f;--paper:#f6f5f2}
+*{box-sizing:border-box}
+body{margin:0;font:18px/1.5 Barlow,system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+main{max-width:760px;margin:0 auto;padding:40px 20px 64px}
+h1,.big{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:800;line-height:1}
+h1{font-size:40px;margin:0 0 24px}
+:focus-visible{outline:3px solid var(--rust);outline-offset:3px}
+.login{display:flex;gap:10px;flex-wrap:wrap}
+input{font:inherit;padding:11px;border:2px solid var(--ink);background:#fff;border-radius:0;flex:1;min-width:200px}
+button{font:600 18px Barlow,sans-serif;background:var(--rust);color:#fff;border:0;padding:11px 22px;cursor:pointer}
+#msg{min-height:1.5em;margin:12px 0 0}
+.err{color:#9b1c1c}
+.big{font-size:clamp(56px,14vw,104px);margin:32px 0 4px}
+.row{display:flex;justify-content:space-between;gap:16px;border-top:2px solid var(--ink);padding:10px 0}
+.row:last-child{border-bottom:2px solid var(--ink)}
+h2{font-family:"Barlow Condensed",sans-serif;font-weight:800;font-size:28px;margin:36px 0 10px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:right;padding:8px 10px;border-top:1px solid #aaa}
+th:first-child,td:first-child{text-align:left}
+thead th{border-top:2px solid var(--ink)}
+.note{font-size:16px;max-width:60ch}
+</style>
+</head>
+<body>
+<main>
+  <h1>Chatbot usage</h1>
+  <div class="login">
+    <input id="pw" type="password" placeholder="Stats password" autocomplete="current-password">
+    <button id="go">Show usage</button>
+  </div>
+  <p id="msg" role="status"></p>
+  <div id="out" hidden>
+    <div class="big" id="total"></div>
+    <div>credits used so far</div>
+    <h2>Credits</h2>
+    <div id="rows"></div>
+    <h2>Tokens by day</h2>
+    <div id="tokens"></div>
+  </div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const usd = n => (n == null ? 'No limit' : '$' + Number(n).toFixed(4));
+const num = n => Number(n || 0).toLocaleString();
+
+function row(label, value) {
+  const d = document.createElement('div');
+  d.className = 'row';
+  const a = document.createElement('span'); a.textContent = label;
+  const b = document.createElement('strong'); b.textContent = value;
+  d.append(a, b);
+  return d;
+}
+
+function cell(tag, text) {
+  const c = document.createElement(tag); c.textContent = text; return c;
+}
+
+async function load() {
+  const msg = $('msg');
+  msg.className = ''; msg.textContent = 'Loading...';
+  try {
+    const res = await fetch('/api/stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: $('pw').value }),
+    });
+    const text = await res.text();
+    let d;
+    try { d = JSON.parse(text); }
+    catch { throw new Error('The server sent a web page instead of data. Check that functions/api/stats.js was deployed.'); }
+    if (!res.ok) throw new Error(d.error || 'Request failed');
+
+    const c = d.credits;
+    $('total').textContent = usd(c.total);
+    const rows = $('rows'); rows.replaceChildren(
+      row('Today', usd(c.today)), row('This week', usd(c.week)), row('This month', usd(c.month)),
+      row('Spending limit', usd(c.limit)), row('Remaining', usd(c.remaining)));
+
+    const t = $('tokens'); t.replaceChildren();
+    if (d.days) {
+      const table = document.createElement('table');
+      const head = document.createElement('thead'), hr = document.createElement('tr');
+      ['Day', 'Requests', 'Prompt tokens', 'Reply tokens', 'Cost'].forEach(h => hr.append(cell('th', h)));
+      head.append(hr); table.append(head);
+      const body = document.createElement('tbody');
+      const sum = { requests: 0, prompt: 0, completion: 0, cost: 0 };
+      d.days.forEach(x => {
+        const tr = document.createElement('tr');
+        tr.append(cell('td', x.date), cell('td', num(x.requests)), cell('td', num(x.prompt)), cell('td', num(x.completion)), cell('td', usd(x.cost)));
+        body.append(tr);
+        sum.requests += x.requests; sum.prompt += x.prompt; sum.completion += x.completion; sum.cost += x.cost;
+      });
+      const tf = document.createElement('tr');
+      tf.append(cell('th', 'Last 30 days'), cell('th', num(sum.requests)), cell('th', num(sum.prompt)), cell('th', num(sum.completion)), cell('th', usd(sum.cost)));
+      body.append(tf); table.append(body);
+      const wrap = document.createElement('div'); wrap.className = 'scroll'; wrap.append(table);
+      const note = document.createElement('p'); note.className = 'note';
+      note.textContent = 'Token counts cover completed days only, so today appears tomorrow. They include every key on this OpenRouter account.';
+      t.append(wrap, note);
+    } else {
+      const p = document.createElement('p'); p.className = 'note';
+      p.textContent = d.activityError || 'Token counts are off. Add the OPENROUTER_MGMT_KEY variable in Cloudflare to turn them on.';
+      t.append(p);
+    }
+    $('out').hidden = false; msg.textContent = '';
+  } catch (e) {
+    $('out').hidden = true; msg.className = 'err'; msg.textContent = e.message;
+  }
+}
+$('go').onclick = load;
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+</script>
+</body>
+</html>
